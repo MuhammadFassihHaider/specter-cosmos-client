@@ -1,12 +1,17 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { SigningStargateClient } from "@cosmjs/stargate";
+import { coins, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import {
+  assertIsDeliverTxSuccess,
+  calculateFee,
+  GasPrice,
+  SigningStargateClient,
+  StdFee,
+} from "@cosmjs/stargate";
+import { rpcEndpoint } from "../../utils/constants";
+import { getAddressNWalletFromMnemonic } from "../../utils/getAddressNWalletFromMnemonic";
 
-const rpcEndpoint = "http://65.109.38.98:26657/";
-// const recipient = "cosmos1dgm29huv8unqxnngm6hrwsmuy5w0qgpa4pz4fk";
-// const mnemonic =
-//   "anger sound wisdom mind swarm tip cruel come wife couple flame sadness mule kid impose silly strong fall this dance fancy rate junk slot";
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -40,17 +45,12 @@ const validateValues = (body: NextApiRequest["body"]) => {
   else return false;
 };
 
-const getAddressNWalletFromMnemonic = async (mnemonic: string) => {
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
-  const [firstAccount] = await wallet.getAccounts();
 
-  return { senderAddress: firstAccount.address, wallet };
-};
 
 const sendCoinsPOST = async (
   mnemonic: string,
   recipient: string,
-  amount: string,
+  _amount: string,
   res: NextApiResponse<string | Object>
 ) => {
   try {
@@ -63,24 +63,26 @@ const sendCoinsPOST = async (
       wallet
     );
 
-    const _amount = {
-      denom: "stake",
+    const amount = coins(_amount, "stake");
+
+    const defaultGasPrice = GasPrice.fromString("0.025stake");
+    const defaultSendFee: StdFee = calculateFee(80_000, defaultGasPrice);
+
+    const balances = await client.getAllBalances(recipient);
+    console.log({ balances });
+
+    const transaction = await client.sendTokens(
+      senderAddress,
+      recipient,
       amount,
-    };
+      defaultSendFee,
+      "Transaction"
+    );
 
-    const fee = {
-      amount: [
-        {
-          denom: "stake",
-          amount: "2000",
-        },
-      ],
-      gas: "180000", // 180k
-    };
 
-    return await client.sendTokens(senderAddress, recipient, [_amount], fee);
+    assertIsDeliverTxSuccess(transaction);
   } catch (error: any) {
     console.log({ error: error.message });
-    res.status(400).send({error: error.message})
+    res.status(400).send({ error: error.message });
   }
 };
