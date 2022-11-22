@@ -31,7 +31,7 @@ const areValuesValid: (valueToValidate: TSendCoinsApiArguments) => boolean = (
 };
 
 const sendCoins = async (body: TSendCoinsApiArguments) => {
-  const response = await fetch(`${BASE_URL}/api/send-coins`, {
+  const response = await fetch(`${BASE_URL}:3000/api/send-coins`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -92,7 +92,7 @@ export default function Home() {
   const getBalance = async (mnemonic: string) => {
     setShowSpinner(true);
     try {
-      const response = await fetch(`${BASE_URL}/api/get-balance`, {
+      const response = await fetch(`${BASE_URL}:3000/api/get-balance`, {
         method: "POST",
         headers: {
           Accept: "application/json",
