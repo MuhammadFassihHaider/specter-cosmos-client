@@ -1,10 +1,9 @@
-import { Coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Head from "next/head";
-import { ChangeEventHandler, useEffect, useState } from "react";
+import { ChangeEventHandler, useState } from "react";
 import toast from "react-hot-toast";
 import { Spinner } from "../components/Spinner";
 import styles from "../styles/Home.module.css";
-import { BASE_URL } from "../utils/constants";
+import { ACCOUNTS, BASE_URL } from "../utils/constants";
 
 type TSendCoinsApiArguments = {
   mnemonic: string;
@@ -28,6 +27,17 @@ const areValuesValid: (valueToValidate: TSendCoinsApiArguments) => boolean = (
   }
 
   return false;
+};
+
+const makeShortMnemonic = (mnemonic: string) => {
+  const splitMn = mnemonic.split(" ");
+
+  if (splitMn.length !== 24) return "";
+
+  const leftMn = [splitMn[0], splitMn[1], splitMn[3]];
+  const rightMn = [splitMn[21], splitMn[22], splitMn[23]];
+
+  return `${leftMn.join(" ")} ... ${rightMn.join(" ")}`;
 };
 
 const sendCoins = async (body: TSendCoinsApiArguments) => {
@@ -66,6 +76,7 @@ export default function Home() {
   });
   const [showSpinner, setShowSpinner] = useState(false);
   const [balance, setBalance] = useState("");
+  const [selectedMnemonicAddress, setSelectedMnemonicAddress] = useState("");
 
   const onSubmit = async () => {
     setShowSpinner(true);
@@ -116,6 +127,10 @@ export default function Home() {
   > = async (e) => {
     if (e.target.name === "mnemonic") {
       getBalance(e.target.value);
+      setSelectedMnemonicAddress(
+        ACCOUNTS.find((account) => account.mnemonic === e.target.value)
+          ?.address ?? ""
+      );
     }
 
     setFormValues({
@@ -132,6 +147,7 @@ export default function Home() {
       {showSpinner && <Spinner />}
       <div className={styles.card}>
         <p>Balance: {balance ? balance : ""}</p>
+        <p>Selected Mnemonic Address: {selectedMnemonicAddress}</p>
         <div className={styles.inputContainer}>
           <select
             onChange={onChangeInput}
@@ -140,26 +156,12 @@ export default function Home() {
             name="mnemonic"
           >
             <option>Select Mnemonic</option>
-            <option value="anger sound wisdom mind swarm tip cruel come wife couple flame sadness mule kid impose silly strong fall this dance fancy rate junk slot">
-              Whitelisted 1 (anger sound wisdom ... rate junk slot)
-            </option>
-            <option value="spot chimney melt portion federal six pave shed lamp festival half balcony fire symbol sock lazy cluster energy mandate arctic baby sausage all notice">
-              Whitelisted 2 (spot chimney melt ... sausage all notice)
-            </option>
-            <option value="sorry tank hard cook coach lesson skill defense tragic bottom ostrich bread ten wise diet face hero buyer close punch student modify problem fence">
-              Whitelisted 3 (sorry tank hard ... modify problem fence)
-            </option>
-            <option value="flag gospel wrap trap body fresh bacon spider scan half return people comfort ladder trap fragile skull palace method cupboard auction shrug slam elite">
-              Not Whitelisted (flag gospel wrap ... shrug slam elite)
-            </option>
+            {ACCOUNTS.map((account) => (
+              <option key={account.mnemonic} value={account.mnemonic}>
+                {account.label} ({makeShortMnemonic(account.mnemonic)})
+              </option>
+            ))}
           </select>
-          {/* <input
-            type="text"
-            name="mnemonic"
-            className={styles.input}
-            placeholder="Sender Mnemonic"
-            onChange={onChangeInput}
-          /> */}
           <input
             type="text"
             name="recipient"
