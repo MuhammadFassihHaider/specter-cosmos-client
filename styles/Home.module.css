@@ -1,5 +1,8 @@
 .container {
   padding: 0 2rem;
+  position: relative;
+  min-height: 100vh;
+  min-width: 100vh;
 }
 
 .main {
@@ -82,15 +85,19 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
-  max-width: 300px;
+  width: 372px;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
 }
 
-.card:hover,
+/* .card:hover,
 .card:focus,
 .card:active {
   color: #0070f3;
   border-color: #0070f3;
-}
+} */
 
 .card h2 {
   margin: 0 0 1rem 0;
@@ -126,4 +133,61 @@
   .logo img {
     filter: invert(1);
   }
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.input {
+  padding: 10px 20px;
+  border-radius: 8px;
+  outline: none;
+  box-shadow: none;
+  border: 1px solid gray;
+  margin: 1px;
+}
+
+.input:focus,
+.input:active {
+  border: 2px solid #0070f3;
+  margin: 0;
+}
+
+/* CSS */
+.button {
+  background-color: #0070f3;
+  border-radius: 8px;
+  width: 100%;
+  border-style: none;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  line-height: 20px;
+  list-style: none;
+  margin: 0;
+  outline: none;
+  padding: 10px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: color 100ms;
+  vertical-align: baseline;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-1:hover,
+.button-1:focus {
+  background-color: #0070f3;
 }
