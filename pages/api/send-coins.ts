@@ -1,17 +1,14 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import { coins, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { coins } from "@cosmjs/proto-signing";
 import {
-  assertIsDeliverTxSuccess,
-  calculateFee,
-  GasPrice,
-  SigningStargateClient,
-  StdFee,
+    assertIsDeliverTxSuccess,
+    calculateFee,
+    GasPrice,
+    SigningStargateClient,
+    StdFee
 } from "@cosmjs/stargate";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { rpcEndpoint } from "../../utils/constants";
 import { getAddressNWalletFromMnemonic } from "../../utils/getAddressNWalletFromMnemonic";
-
-
 
 export default async function handler(
   req: NextApiRequest,
@@ -45,8 +42,6 @@ const validateValues = (body: NextApiRequest["body"]) => {
   else return false;
 };
 
-
-
 const sendCoinsPOST = async (
   mnemonic: string,
   recipient: string,
@@ -78,7 +73,6 @@ const sendCoinsPOST = async (
       defaultSendFee,
       "Transaction"
     );
-
 
     assertIsDeliverTxSuccess(transaction);
   } catch (error: any) {

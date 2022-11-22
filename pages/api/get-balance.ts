@@ -1,15 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import { coins, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import {
-  assertIsDeliverTxSuccess,
-  calculateFee,
-  GasPrice,
-  SigningStargateClient,
-  StdFee,
+  SigningStargateClient
 } from "@cosmjs/stargate";
-import { getAddressNWalletFromMnemonic } from "../../utils/getAddressNWalletFromMnemonic";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { rpcEndpoint } from "../../utils/constants";
+import { getAddressNWalletFromMnemonic } from "../../utils/getAddressNWalletFromMnemonic";
 
 export default async function handler(
   req: NextApiRequest,
