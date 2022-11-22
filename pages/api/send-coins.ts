@@ -75,6 +75,7 @@ const sendCoinsPOST = async (
     );
 
     assertIsDeliverTxSuccess(transaction);
+    res.status(200).send({data: "Success"})
   } catch (error: any) {
     console.log({ error: error.message });
     res.status(400).send({ error: error.message });
